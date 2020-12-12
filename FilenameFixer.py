@@ -26,7 +26,7 @@ parser.add_argument( 'new_character', help='Character to convert to.')
 
 parser.add_argument('--version', action='version', version='%(prog)s 0.6')
 parser.add_argument( '-r', '--recursive', action='store_true', help='Applies the specified character substitution recursively to the file hierarcy rooted at the given path')
-parser.add_argument( '-n', '--dry-run', action='store_true', help='show what would have been transferred')
+parser.add_argument( '-n', '--dry-run', action='store_true', help='show what would have been renamed')
 parser.add_argument( '-v', '--verbose', action='store_true', help='Causes FilenameFixer to be verbose, showing full file path as they are changed.')
 parser.add_argument( '-l', '--log', help='Specify path to write log file.')
 parser.add_argument( '-c', '--copy', help='FEATURE NOT YET DEVELOPED: Copies the entire directory structure and contained files to specified locations, replacing the specified character in each file path.')
