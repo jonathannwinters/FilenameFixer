@@ -27,7 +27,7 @@ optional arguments:
   -r, --recursive       Applies the specified character substitution
                         recursively to the file hierarcy rooted at the given
                         path
-  -n, --dry-run         show what would have been transferred
+  -n, --dry-run         show what would have been renamed
   -v, --verbose         Causes FilenameFixer to be verbose, showing full file
                         path as they are changed.
   -l LOG, --log LOG     Specify path to write log file.
