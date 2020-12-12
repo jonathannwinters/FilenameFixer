@@ -1,11 +1,12 @@
 # FilenameFixer
 Replaces given chars in all filenames contained within a given directory.
 
-*Download:*
+## Download:
 [macOS Binary](https://github.com/jonathannwinters/FilenameFixer/raw/main/FilenameFixer)
+
 [Windows Binary] **Coming soon
 
-*Help:*
+## Help:
 
 usage: FilenameFixer [-h] [--version] [-r] [-v] [-l LOG] [-c COPY]
                      [--analyze ANALYZE] [--dirs-only DIRS_ONLY]
