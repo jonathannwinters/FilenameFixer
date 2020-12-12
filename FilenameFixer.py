@@ -1,16 +1,17 @@
 #!/Library/Frameworks/Python.framework/Versions/3.8/bin/python3
 
 __author__ = "Jonathan N. Winters"
-__copyright__ = "Copyright 2020
+__copyright__ = "Copyright 2020"
 __credits__ = [""]
 __license__ = "GPL"
-__version__ = "0.2"
+__version__ = "0.6"
 __maintainer__ = "Jonathan N. Winters"
 __email__ = "jnw25@cornell.edu"
 __status__ = "Work in progress."
 
 import os
 import argparse
+from datetime import datetime
 
 total_changes = 0
 num_dirs = 0
@@ -23,8 +24,9 @@ parser.add_argument( 'path',  help='Specify path to directory.')
 parser.add_argument( 'current_character', help='Character to convert from.')
 parser.add_argument( 'new_character', help='Character to convert to.')
 
-parser.add_argument('--version', action='version', version='%(prog)s 0.2')
+parser.add_argument('--version', action='version', version='%(prog)s 0.6')
 parser.add_argument( '-r', '--recursive', action='store_true', help='Applies the specified character substitution recursively to the file hierarcy rooted at the given path')
+parser.add_argument( '-n', '--dry-run', action='store_true', help='show what would have been transferred')
 parser.add_argument( '-v', '--verbose', action='store_true', help='Causes FilenameFixer to be verbose, showing full file path as they are changed.')
 parser.add_argument( '-l', '--log', help='Specify path to write log file.')
 parser.add_argument( '-c', '--copy', help='FEATURE NOT YET DEVELOPED: Copies the entire directory structure and contained files to specified locations, replacing the specified character in each file path.')
@@ -35,11 +37,11 @@ parser.add_argument('--files-only', help='FEATURE NOT YET DEVELOPED: Replaces gi
 
 
 
-def char_replace(file_list,char_from,char_to, verbose):
+def char_replace(file_list,char_from,char_to, verbose, dry_run):
     #create new LIST of files that has pairs of src/dst paths
-    #os.rename(src, dst)
+    log_list = []
     for original_absolute_path in file_list:
-       
+   
         filename = original_absolute_path.split("/")[-1]
         folder = original_absolute_path[0:len(original_absolute_path)-len(filename)]
 
@@ -47,18 +49,26 @@ def char_replace(file_list,char_from,char_to, verbose):
         has_special_char = (filename.find(char_from) > 0)
         new_filename = filename.replace(char_from, char_to) 
         new_absolute_path = folder + new_filename
-        os.replace(original_absolute_path,new_absolute_path)
+        if has_special_char and not dry_run:
+            os.replace(original_absolute_path,new_absolute_path)
         if verbose and has_special_char:
-            print(original_absolute_path)
-            print(new_absolute_path)
-   
+            log_line = "Original: " + original_absolute_path
+            log_list.append(log_line)
+            print(log_line)
+            log_line = "     New: " + new_absolute_path
+            log_list.append(log_line)
+            print(log_line)
+            log_line = ""
+            log_list.append(log_line)
+            print(log_line)
+            
+    return log_list
             
 
 def create_file_list(path,recursive):
     file_list = []
     if recursive:
         for path, dirs, files in os.walk(path):
-            #print(os.path.join(path,dirs))
             for filename in files:
                 full_path = os.path.join(path,filename)
                 file_list.append(full_path)
@@ -90,17 +100,67 @@ def copy_and_rename():
 
 def main():    
     args = parser.parse_args()
-    print("Search path = " + args.path)
-    print("Swapping " + args.current_character + " with " +args.new_character)
-
-    print(str(args.copy) + " is the new path") # do so preserving time stamps?
-   
+    print(args)
     file_list = create_file_list(args.path,args.recursive)
     special_character_count = count_num_files_with_special_char(file_list,args.current_character)
-    print(str(special_character_count) + "\tfiles containing [" + args.current_character + "]" )
+    log_list = []
+    #print(args.dry_run + " is the dry run")
+    log_from_char_replace = char_replace(file_list, args.current_character, args.new_character, args.verbose, args.dry_run) 
+    #log_from_char_replace = []
+    
+    # get current date and time
+    now = datetime.now()
+    date_string = now.strftime("%B %d, %Y %H:%M:%S")
 
-    char_replace(file_list, args.current_character, args.new_character, args.verbose)
-    print(str(len(file_list)) + "\ttotal files searched")
+    # first line of log will be the executable name + run + date
+    log_line = '{}'.format(parser.prog)+ " run  " + date_string
+    print(log_line)
+    log_list.append(log_line)
+    
+    # show what the from/to characters will be
+    log_line = "Replace [ " + args.current_character + " ] with [ " +args.new_character +" ]" + " in directory [" + args.path + "]"
+    print(log_line)
+    log_list.append(log_line)
+
+    # displays count of filenames that contain the specified from char
+    log_line = str(special_character_count) + "\tfiles containing [ " + args.current_character + " ]" 
+    print(log_line)
+    log_list.append(log_line)
+
+    # displays count of all files searched
+    log_line = str(len(file_list)) + "\ttotal files searched"
+    print(log_line)
+    log_list.append(log_line)
+
+
+    # notify if dry run
+    if args.dry_run:
+        log_line = "This is a dry-run only. No changes have actually been made."
+        log_list.append(log_line)
+        print(log_line)
+
+    # add two blank lines
+    log_list.append("")
+    log_list.append("")
+
+    log_list = log_list + log_from_char_replace
+
+    logs_enabled = (len(args.log) > 0)
+    log_file_name = now.strftime("%y%d%m%H%M%S-" + '{}'.format(parser.prog) )
+    if(logs_enabled):
+        f = open(str(args.log) + "/" + log_file_name + ".log" , "w" )
+        for log_line in log_list:
+            f.write(log_line + "\r\n")
+        f.close
+        # Test to see if file has been created, if so print confirmation
+        print("Log file created: " + str(args.log) + "/" + log_file_name + ".log")
+
+        ########## IMPORTANT HOW TO HNDLE DETECION OF TRAILING / in path and also conver on WINDOWS
+
+        
+
+
+
    
     
 
