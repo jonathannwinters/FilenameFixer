@@ -7,7 +7,7 @@ Replaces given chars in all filenames contained within a given directory.
 [Windows Binary] **Coming soon
 
 ## Help:
-
+```
 usage: FilenameFixer.py [-h] [--version] [-r] [-v] [-l LOG] [-c COPY]
                         [--analyze ANALYZE] [--dirs-only DIRS_ONLY]
                         [--files-only FILES_ONLY]
@@ -41,3 +41,5 @@ optional arguments:
   --files-only FILES_ONLY
                         FEATURE NOT YET DEVELOPED: Replaces given character in
                         file names only and does not modify directories.
+
+```
