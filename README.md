@@ -8,10 +8,10 @@ Replaces given chars in all filenames contained within a given directory.
 
 ## Help:
 
-usage: FilenameFixer [-h] [--version] [-r] [-v] [-l LOG] [-c COPY]
-                     [--analyze ANALYZE] [--dirs-only DIRS_ONLY]
-                     [--files-only FILES_ONLY]
-                     path current_character new_character
+usage: FilenameFixer.py [-h] [--version] [-r] [-v] [-l LOG] [-c COPY]
+                        [--analyze ANALYZE] [--dirs-only DIRS_ONLY]
+                        [--files-only FILES_ONLY]
+                        path current_character new_character
 
 Replaces given chars in all filenames contained within a given directory.
 NOTE: This program does not yet correct directory names.
