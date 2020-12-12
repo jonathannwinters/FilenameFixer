@@ -8,10 +8,10 @@ Replaces given chars in all filenames contained within a given directory.
 
 ## Help:
 ```
-usage: FilenameFixer.py [-h] [--version] [-r] [-v] [-l LOG] [-c COPY]
-                        [--analyze ANALYZE] [--dirs-only DIRS_ONLY]
-                        [--files-only FILES_ONLY]
-                        path current_character new_character
+usage: FilenameFixer [-h] [--version] [-r] [-n] [-v] [-l LOG] [-c COPY]
+                     [--analyze ANALYZE] [--dirs-only DIRS_ONLY]
+                     [--files-only FILES_ONLY]
+                     path current_character new_character
 
 Replaces given chars in all filenames contained within a given directory.
 NOTE: This program does not yet correct directory names.
@@ -27,9 +27,11 @@ optional arguments:
   -r, --recursive       Applies the specified character substitution
                         recursively to the file hierarcy rooted at the given
                         path
+  -n, --dry-run         show what would have been transferred
   -v, --verbose         Causes FilenameFixer to be verbose, showing full file
                         path as they are changed.
-  -l LOG, --log LOG     FEATURE NOT YET DEVELOPED: Specify path to write log file.
+  -l LOG, --log LOG     FEATURE NOT YET DEVELOPED: Specify path to write log
+                        file.
   -c COPY, --copy COPY  FEATURE NOT YET DEVELOPED: Copies the entire directory
                         structure and contained files to specified locations,
                         replacing the specified character in each file path.
