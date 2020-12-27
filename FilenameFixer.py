@@ -38,8 +38,12 @@ parser.add_argument('--files-only', help='FEATURE NOT YET DEVELOPED: Replaces gi
 
 
 def char_replace(file_list,char_from,char_to, verbose, dry_run):
-    #create new LIST of files that has pairs of src/dst paths
+    '''iterates through list of absolute file paths and renames any files found matching the specified from/to pair'''
+    
+    #create new log of files that has pairs of src/dst paths
     log_list = []
+
+    # for each path in the file_list, change the filename from char to char
     for original_absolute_path in file_list:
    
         filename = original_absolute_path.split("/")[-1]
@@ -49,19 +53,25 @@ def char_replace(file_list,char_from,char_to, verbose, dry_run):
         has_special_char = (filename.find(char_from) > 0)
         new_filename = filename.replace(char_from, char_to) 
         new_absolute_path = folder + new_filename
-        if has_special_char and not dry_run:
-            os.replace(original_absolute_path,new_absolute_path)
-        if verbose and has_special_char:
-            log_line = "Original: " + original_absolute_path
-            log_list.append(log_line)
-            print(log_line)
-            log_line = "     New: " + new_absolute_path
-            log_list.append(log_line)
-            print(log_line)
-            log_line = ""
-            log_list.append(log_line)
-            print(log_line)
-            
+        if has_special_char:
+            if not dry_run:
+                # CHECK PERMISSIONS
+                # IF PERMISSIONS PERFORM MOVE Otherwise break?
+                os.replace(original_absolute_path,new_absolute_path)
+                #CONFIRM MOVE
+   
+            log_line_original = "Original: " + original_absolute_path
+            log_list.append(log_line_original)
+            log_line_new= "     New: " + new_absolute_path
+            log_list.append(log_line_new)
+            log_line_blank = ""
+            log_list.append(log_line_blank)
+
+            if verbose:
+                print(log_line_original)
+                print(log_line_new)
+                print(log_line_blank)
+                
     return log_list
             
 
@@ -92,6 +102,7 @@ def count_num_files_with_special_char(file_list,character):
     
 
 def copy_and_rename():
+    '''FUNCTION NOT YET PROGRAMMED: Duplicate files made with the character replaced. Original Files untouched.'''
     #http://techs.studyhorror.com/d/python-how-to-copy-and-rename-files
     
     return 0
@@ -100,13 +111,15 @@ def copy_and_rename():
 
 def main():    
     args = parser.parse_args()
-    print(args)
+
+    print("")
+    print("")
+    
     file_list = create_file_list(args.path,args.recursive)
     special_character_count = count_num_files_with_special_char(file_list,args.current_character)
     log_list = []
-    #print(args.dry_run + " is the dry run")
+
     log_from_char_replace = char_replace(file_list, args.current_character, args.new_character, args.verbose, args.dry_run) 
-    #log_from_char_replace = []
     
     # get current date and time
     now = datetime.now()
@@ -145,10 +158,16 @@ def main():
 
     log_list = log_list + log_from_char_replace
 
-    logs_enabled = (len(args.log) > 0)
-    log_file_name = now.strftime("%y%d%m%H%M%S-" + '{}'.format(parser.prog) )
-    if(logs_enabled):
-        f = open(str(args.log) + "/" + log_file_name + ".log" , "w" )
+    
+    log_file_name = now.strftime("%Y%m%d%H%M%S-" + '{}'.format(parser.prog) )
+
+    #if logs are enabled then write the log list to file at specified path
+    if(args.log):
+        # if directory path does not exist, create directory
+        if not os.path.exists(args.log + "/FileFixerLogs"):
+            os.makedirs(args.log + "/FileFixerLogs")    
+        #create the log file by writing each line of the log_list        
+        f = open(str(args.log) + "/FileFixerLogs/" + log_file_name + ".log" , "w" )
         for log_line in log_list:
             f.write(log_line + "\r\n")
         f.close
@@ -156,14 +175,6 @@ def main():
         print("Log file created: " + str(args.log) + "/" + log_file_name + ".log")
 
         ########## IMPORTANT HOW TO HNDLE DETECION OF TRAILING / in path and also conver on WINDOWS
-
-        
-
-
-
-   
-    
-
 
 main()
 
